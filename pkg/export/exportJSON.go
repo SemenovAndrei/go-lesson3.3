@@ -7,16 +7,6 @@ import (
 	"log"
 )
 
-type Currency struct {
-	Code  string  `json:"code"`
-	Name  string  `json:"name"`
-	Value float64 `json:"value"`
-}
-
-type Currencies struct {
-	Currency []Currency
-}
-
 func Export(storage []save.Currency, filename string) error {
 
 	encoded, err := json.MarshalIndent(storage, "", " ")

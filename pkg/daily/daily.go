@@ -5,11 +5,12 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"time"
 )
 
 type Service struct {
-	url     string
-	client  *http.Client
+	url    string
+	client *http.Client
 }
 
 func NewService(
@@ -22,7 +23,7 @@ func NewService(
 }
 
 func (s *Service) Extract() (data []byte, err error) {
-	ctx := context.Background()
+	ctx, _ := context.WithTimeout(context.Background(), 1 * time.Second)
 	req, err := http.NewRequestWithContext(
 		ctx,
 		http.MethodGet,
@@ -30,20 +31,17 @@ func (s *Service) Extract() (data []byte, err error) {
 		nil,
 	)
 	if err != nil {
-		log.Println(err)
 		return nil, err
 	}
 
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	resp, err := s.client.Do(req)
 	if err != nil {
-		log.Println(err)
 		return nil, err
 	}
 
 	respBody, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Println(err)
 		return nil, err
 	}
 
@@ -58,4 +56,3 @@ func (s *Service) Extract() (data []byte, err error) {
 
 	return respBody, err
 }
-
